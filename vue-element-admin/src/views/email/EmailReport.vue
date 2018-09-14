@@ -57,7 +57,7 @@
     </div>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="right" label-width="150px" style="width: 400px; margin-left:10px;">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="right" label-width="25%" style="width: 80%; margin-left:20px;">
         <el-form-item :label="$t('email.type')" prop="bizType">
           <el-input :disabled="modifiable" v-model="temp.bizType"/>
         </el-form-item>
@@ -91,9 +91,9 @@
 </template>
 
 <script>
-import axios from 'axios'
+// import axios from 'axios'
 import { getResult, postData, deleteData, postData_param } from '@/api/email'
-import qs from 'qs'
+// import qs from 'qs'
 
 import waves from '@/directive/waves' // 水波纹指令
 
@@ -280,9 +280,10 @@ export default {
     },
     handleView(row) {
       if (row.templateName.toLocaleUpperCase() === 'TABLE') {
-        this.$router.push({ path: '/emailReport/emailView', query: { bizType: row.bizType }})
+        this.$router.push({ path: '/emailReport/emailTableView', query: { bizType: row.bizType }})
       } else if (row.templateName.toLocaleUpperCase() === 'EXCEL') {
-        // this.$router.push({ push: '/emailReport/emailDetail', query: { bizType: row.bizType}})
+        console.log('templateName', row.templateName)
+        this.$router.push({ path: '/emailReport/emailExcelView', query: { bizType: row.bizType }})
       } else {
         this.$message({
           type: 'warning',

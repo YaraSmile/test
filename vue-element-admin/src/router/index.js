@@ -94,7 +94,7 @@ export const constantRouterMap = [
   {
     path: '/emailReport',
     component: Layout,
-    redirect: '/emailReport/list',
+    redirect: '/emailReport/emailList',
     name: 'Email Report',
     alwaysShow: true,
     meta: { title: 'emailReport', icon: 'email' },
@@ -108,10 +108,17 @@ export const constantRouterMap = [
         meta: { title: 'reportBizList' }
       },
       {
-        path: 'emailView',
-        component: () => import('@/views/email/EmailView'),
-        name: 'Email View',
-        meta: { title: 'emailView' },
+        path: 'emailTableView',
+        component: () => import('@/views/email/EmailTableView'),
+        name: 'Email Table View',
+        meta: { title: 'emailTableView' },
+        hidden: true
+      },
+      {
+        path: 'emailExcelView',
+        component: () => import('@/views/email/EmailExcelView'),
+        name: 'Email Excel View',
+        meta: { title: 'emailExcelView' },
         hidden: true
       }
     ]
@@ -359,26 +366,5 @@ export const asyncRouterMap = [
       }
     ]
   },
-
-  // Email Report Start
-  {
-    path: '/email-report',
-    component: Layout,
-    name: 'Email Report',
-    meta: { title: 'emailReport', icon: 'email' },
-    alwaysShow: true,
-    children: [
-      {
-        path: '/index',
-        component: () => import('@/views/email/emailReport'),
-        name: 'Report Biz List',
-        //  add permission:admin or user
-        // meta:{roles: ['admin', 'editor']}
-        meta: { title: 'reportBizList' }
-      }
-    ]
-  },
-  // Email Report End
-
   { path: '*', redirect: '/404', hidden: true }
 ]

@@ -63,7 +63,9 @@ export default {
     i18n: 'I18n',
     externalLink: 'External Link',
     emailReport: 'Email Report',
-    reportBizList: 'Report Biz List'
+    reportBizList: 'Report Biz List',
+    emailTableView: 'Email Table View',
+    emailExcelView: 'Email Excel View'
   },
   navbar: {
     logOut: 'Log Out',
@@ -149,7 +151,7 @@ export default {
   },
   // Email Report End
   // Report List Start
-  reportList: {
+  tableReportList: {
     id: 'ID',
     bizType: 'Biz Type',
     titleHtml: 'Title',
@@ -161,15 +163,39 @@ export default {
     reportList: 'Report List',
     edit: 'Edit',
     submit: 'Submit',
-    cancel: 'Cancle'
-  },
-  // Report List End
-  emailHtml: {
+    cancel: 'Cancle',
+    rowNum: 'Row Num',
+    colNum: 'Col Num',
+    color: 'Color',
+    italic: 'Italic',
+    fontSize: 'Font Size',
+    align: 'Align',
+    delete: 'Delete',
+    styleList: 'Style List',
     header: 'Email Header',
     tail: 'Email Tail',
-    actions: 'Actions',
-    edit: 'Edit',
     emailHtml: 'Email HTML'
+  },
+  excelReportList: {
+    id: 'ID',
+    bizType: 'Biz Type',
+    excelFileName: 'Excel File Name',
+    excelReportSql: 'Excel Report Sql',
+    fileType: 'File Type',
+    mailHtmlContent: 'Mail Html',
+    mailTitle: 'Mail Title',
+    attachmentDateformate: 'Attachment Data Formate'
+  },
+  // Report List End
+  emailRecipients: {
+    emailRecipients: 'Email Recipients',
+    id: 'ID',
+    mail: 'Email',
+    runtimeType: 'Runtime Type',
+    mailOrder: 'Email Order',
+    add: 'Add',
+    delete: 'Delete',
+    actions: 'Actions'
   },
   errorLog: {
     tips: 'Please click the bug icon in the upper right corner',

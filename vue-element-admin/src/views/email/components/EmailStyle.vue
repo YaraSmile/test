@@ -11,7 +11,7 @@
           </div>
         </el-col>
       </el-row>
-      <el-table :data="list" border highlight-current-row="">
+      <el-table v-loading="loading" :data="list" border highlight-current-row="">
         <el-table-column :label="$t('emailRecipients.id')" width="60px">
           <template slot-scope="scope">
             <span>{{ scope.row.id }}</span>
@@ -60,13 +60,13 @@
 <script>
 import { getResult_param, deleteData, postData } from '../../../api/email'
 
-const env = 'test'
-const GET_RECIP_URL = '/webapi/schedulereport/biz'
-const DELETE_RECIP_URL = '/webapi/schedulereport/biz/mail'
-const POST_RECIP_URL = '/webapi/schedulereport/biz/mail'
+// const env = 'test'
+// const GET_RECIP_URL = '/webapi/schedulereport/biz'
+// const DELETE_RECIP_URL = '/webapi/schedulereport/biz/mail'
+// const POST_RECIP_URL = '/webapi/schedulereport/biz/mail'
 
 export default {
-  name: 'EmailRecipients',
+  name: 'EmailStyle',
   props: {
     bizType: {
       type: String,
@@ -76,7 +76,7 @@ export default {
   data() {
     return {
       list: null,
-      // loading: false,
+      loading: false,
       temp: {
         bizType: this.bizType,
         mail: '',
@@ -97,91 +97,91 @@ export default {
   created() {
     this.getRecipients()
   },
-  methods: {
-    getRecipients() {
-      // this.loading = true
-      getResult_param(`${GET_RECIP_URL}/${this.bizType}/env`, env).then(res => {
-        // this.loading = false
-        if (res.data.code === 1) {
-          console.log(5555, res)
-          this.list = res.data.data
-        } else {
-          this.$notify({
-            title: '失败',
-            message: res.data.msg,
-            type: 'fail',
-            duration: 2000
-          })
-        }
-      }).catch(err => {
-        // this.loading = false
-        this.$alert(err)
-      })
-    },
-    handleCreate() {
-      this.dialogFormVisible = true
-      this.temp = {}
-      this.temp.runtimeType = env
-      this.temp.bizType = this.bizType
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    handleEdit(row) {
-      this.dialogFormVisible = true
-      this.temp = Object.assign({}, row)
-    },
-    updateData() {
-      this.$refs['dataForm'].validate(valid => {
-        if (valid) {
-          postData(POST_RECIP_URL, this.temp).then(res => {
-            console.log(res)
-            if (res.data.code === 1) {
-              this.dialogFormVisible = false
-              this.$notify({
-                title: '成功',
-                message: '提交成功',
-                type: 'success',
-                duration: 2000
-              })
-            } else {
-              this.$notify({
-                title: '失败',
-                message: res.data.msg,
-                type: 'fail',
-                duration: 2000
-              })
-            }
-            this.getRecipients()
-          }).catch(err => {
-            this.$alert(err)
-          })
-        }
-      })
-    },
-    handleDelete(row) {
-      deleteData(DELETE_RECIP_URL, row.id).then(res => {
-        if (res.data.code === 1) {
-          this.$notify({
-            title: '成功',
-            message: '删除成功',
-            type: 'success',
-            duration: 2000
-          })
-          this.getRecipients()
-        } else {
-          this.$notify({
-            title: '失败',
-            message: res.data.msg,
-            type: 'fail',
-            duration: 2000
-          })
-        }
-      }).catch(err => {
-        this.$alert(err)
-        console.log(err)
-      })
-    }
-  }
+  // methods: {
+  //   getRecipients() {
+  //     this.loading = true
+  //     getResult_param(`${GET_RECIP_URL}/${this.bizType}/env`, env).then(res => {
+  //       this.loading = false
+  //       if (res.data.code === 1) {
+  //         console.log(5555, res)
+  //         this.list = res.data.data
+  //       } else {
+  //         this.$notify({
+  //           title: '失败',
+  //           message: res.data.msg,
+  //           type: 'fail',
+  //           duration: 2000
+  //         })
+  //       }
+  //     }).catch(err => {
+  //       this.loading = false
+  //       this.$alert(err)
+  //     })
+  //   },
+  //   handleCreate() {
+  //     this.dialogFormVisible = true
+  //     this.temp = {}
+  //     this.temp.runtimeType = env
+  //     this.temp.bizType = this.bizType
+  //     this.$nextTick(() => {
+  //       this.$refs['dataForm'].clearValidate()
+  //     })
+  //   },
+  //   handleEdit(row) {
+  //     this.dialogFormVisible = true
+  //     this.temp = Object.assign({}, row)
+  //   },
+  //   updateData() {
+  //     this.$refs['dataForm'].validate(valid => {
+  //       if (valid) {
+  //         postData(POST_RECIP_URL, this.temp).then(res => {
+  //           console.log(res)
+  //           if (res.data.code === 1) {
+  //             this.dialogFormVisible = false
+  //             this.$notify({
+  //               title: '成功',
+  //               message: '提交成功',
+  //               type: 'success',
+  //               duration: 2000
+  //             })
+  //           } else {
+  //             this.$notify({
+  //               title: '失败',
+  //               message: res.data.msg,
+  //               type: 'fail',
+  //               duration: 2000
+  //             })
+  //           }
+  //           this.getRecipients()
+  //         }).catch(err => {
+  //           this.$alert(err)
+  //         })
+  //       }
+  //     })
+  //   },
+  //   handleDelete(row) {
+  //     deleteData(DELETE_RECIP_URL, row.id).then(res => {
+  //       if (res.data.code === 1) {
+  //         this.$notify({
+  //           title: '成功',
+  //           message: '删除成功',
+  //           type: 'success',
+  //           duration: 2000
+  //         })
+  //         this.getRecipients()
+  //       } else {
+  //         this.$notify({
+  //           title: '失败',
+  //           message: res.data.msg,
+  //           type: 'fail',
+  //           duration: 2000
+  //         })
+  //       }
+  //     }).catch(err => {
+  //       this.$alert(err)
+  //       console.log(err)
+  //     })
+  //   }
+  // }
 }
 </script>
