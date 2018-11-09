@@ -7,8 +7,8 @@
         </el-col>
         <el-col :span="12">
           <div style="margin-right:15px;margin-bottom:15px;" align="right">
-            <el-button type="primary" icon="el-icon-edit" @click="handleEdit()">{{ $t('tableReportList.edit') }}</el-button>
-            <el-button type="primary" icon="el-icon-check" @click="confirmEmail()">{{ $t('tableReportList.submit') }}</el-button>
+            <el-button :disabled="!modifiedEmail" type="primary" size="mini" @click="handleEdit()">{{ $t('tableReportList.edit') }}</el-button>
+            <el-button :disabled="modifiedEmail" type="primary" size="mini" @click="confirmEmail()">{{ $t('tableReportList.submit') }}</el-button>
           </div>
         </el-col>
       </el-row>
@@ -31,7 +31,7 @@
 <script>
 import { getResult_param, postData } from '../../../api/email'
 import axios from 'axios'
-const GETPOST_EMAILHTML_URL = '/webapi/schedulereport/biz/table/html'
+import { GETPOST_EMAILHTML_URL } from '@/api/constants'
 
 export default {
   name: 'EmailHTML',
@@ -71,7 +71,7 @@ export default {
           this.$notify({
             title: '失败',
             message: res.data.msg,
-            type: 'fail',
+            type: 'error',
             duration: 2000
           })
         }
@@ -87,9 +87,6 @@ export default {
       const ts = this
       let headerHtml = {}
       let footerHtml = {}
-      console.log('headerid', !this.header.id)
-      console.log('headerhtml', this.header.contentHtml)
-      console.log('footerhtml', this.footer.contentHtml)
       if (this.header.id) {
         headerHtml = Object.assign({}, this.header)
         footerHtml = Object.assign({}, this.footer)
@@ -100,15 +97,10 @@ export default {
         footerHtml.type = 'foot'
         footerHtml.bizType = this.bizType
         footerHtml.contentHtml = this.footer.contentHtml
-        console.log('head', headerHtml)
-        console.log('foot', footerHtml)
       }
-      console.log('head1', headerHtml)
-      console.log('foot1', footerHtml)
       axios.all([postData(GETPOST_EMAILHTML_URL, headerHtml), postData(GETPOST_EMAILHTML_URL, footerHtml)]).then(
         axios.spread(function(acct, perms) {
-          console.log('acct', acct)
-          console.log('perms', perms)
+          ts.modifiedEmail = true
           if (acct.data.code === 1 && perms.data.code === 1) {
             ts.$notify({
               title: '成功',
@@ -116,13 +108,12 @@ export default {
               type: 'success',
               duration: 2000
             })
-            ts.modifiedEmail = true
           } else {
             const msg = acct.data.msg.toLocaleUpperCase() !== 'SUCCESS' ? acct.data.msg : perms.data.msg
             ts.$notify({
               title: '失败',
               message: msg,
-              type: 'fail',
+              type: 'error',
               duration: 2000
             })
           }

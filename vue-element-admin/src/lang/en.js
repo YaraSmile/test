@@ -75,7 +75,7 @@ export default {
     theme: 'theme'
   },
   login: {
-    title: 'Login Form',
+    title: 'Login',
     logIn: 'Log in',
     username: 'Username',
     password: 'Password',
@@ -144,6 +144,7 @@ export default {
     view: 'View',
     mailTitle: 'Email Title',
     mailTitleDateFormat: 'Email Date Format',
+    mailTitleDateTimezone: 'Mail Title Timezone',
     cancel: 'Cancel',
     confirm: 'Confirm',
     delete: 'Delete',
@@ -170,11 +171,15 @@ export default {
     italic: 'Italic',
     fontSize: 'Font Size',
     align: 'Align',
+    isMergeCol: 'Merge Col',
     delete: 'Delete',
     styleList: 'Style List',
     header: 'Email Header',
     tail: 'Email Tail',
-    emailHtml: 'Email HTML'
+    emailHtml: 'Email HTML',
+    tableHeadList: 'Table Head List',
+    headColumnName: 'Head Column Name',
+    headColumnOrder: 'Head Column Order'
   },
   excelReportList: {
     id: 'ID',

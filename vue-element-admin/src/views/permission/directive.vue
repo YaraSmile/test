@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <switch-roles @change="handleRolesChange" />
+    <switch-roles />
     <div :key="key" style="margin-top:30px;">
       <span v-permission="['admin']" class="permission-alert">
         Only

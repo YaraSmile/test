@@ -5,64 +5,59 @@ import { asyncRouterMap, constantRouterMap } from '@/router'
  * @param roles
  * @param route
  */
-function hasPermission(roles, route) {
-  if (route.meta && route.meta.roles) {
-    return roles.some(role => route.meta.roles.indexOf(role) >= 0)
-  } else {
-    return true
-  }
-}
+// function hasPermission(roles, route) {
+//   if (route.meta && route.meta.roles) {
+//     return roles.some(role => route.meta.roles.indexOf(role) >= 0)
+//   } else {
+//     return true
+//   }
+// }
 
 /**
  * 递归过滤异步路由表，返回符合用户角色权限的路由表
  * @param asyncRouterMap
  * @param roles
- */
-function filterAsyncRouter(asyncRouterMap, roles) {
-  console.log('roles-permission：' + roles)
-  const accessedRouters = asyncRouterMap.filter(route => {
-    console.log(hasPermission(roles, route))
-    if (hasPermission(roles, route)) {
-      if (route.children && route.children.length) {
-        route.children = filterAsyncRouter(route.children, roles)
-      }
-      return true
-    }
-    return false
-  })
-  return accessedRouters
-}
+//  */
+// function filterAsyncRouter(asyncRouterMap, roles) {
+//   console.log('roles-permission：' + roles)
+//   const accessedRouters = asyncRouterMap.filter(route => {
+//     console.log(hasPermission(roles, route))
+//     if (hasPermission(roles, route)) {
+//       if (route.children && route.children.length) {
+//         route.children = filterAsyncRouter(route.children, roles)
+//       }
+//       return true
+//     }
+//     return false
+//   })
+//   return accessedRouters
+// }
 
 const permission = {
   state: {
     routers: constantRouterMap,
-    // addRouters: []
-    addRouters: constantRouterMap
+    addRouters: []
   },
   mutations: {
     SET_ROUTERS: (state, routers) => {
-      // state.addRouters = routers
-      state.addRouters = constantRouterMap.concat(routers)
+      state.addRouters = routers
       state.routers = constantRouterMap.concat(routers)
     }
   },
   actions: {
     GenerateRoutes({ commit }, data) {
-      console.log(data)
       return new Promise(resolve => {
-        const { roles } = data
-        console.log('roles.admin' + roles.indexOf('admin'))
-        let accessedRouters
-        if (roles.indexOf('admin') >= 0) {
-          accessedRouters = asyncRouterMap
-          console.log(accessedRouters)
-        } else {
-          accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
+        const { menus } = data
+        var accessedRouters = []
+        for (const menu of menus) {
+          for (const item of asyncRouterMap) {
+            if (item.name === menu.menuName) {
+              accessedRouters.push(item)
+              break
+            }
+          }
         }
-        commit('SET_NAME', 'Super Admin')
-        commit('SET_AVATAR', 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif')
-        commit('SET_INTRODUCTION', 'dff')
-        commit('SET_TOKEN', 'Admin-Token')
+        console.log('accessedRoutes', accessedRouters)
         commit('SET_ROUTERS', accessedRouters)
         resolve()
       })

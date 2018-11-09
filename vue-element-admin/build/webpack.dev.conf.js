@@ -15,6 +15,9 @@ function resolve(dir) {
 
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
+const env = process.env.NODE_ENV === 'development'
+  ? require('../config/dev.env')
+  : require('../config/prod.env')
 
 const devWebpackConfig = merge(baseWebpackConfig, {
   mode: 'development',
@@ -48,7 +51,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env': require('../config/dev.env')
+      'process.env': env
     }),
     new webpack.HotModuleReplacementPlugin(),
     // https://github.com/ampedandwired/html-webpack-plugin
@@ -56,7 +59,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       filename: 'index.html',
       template: 'index.html',
       inject: true,
-      favicon: resolve('favicon.ico'),
+      favicon: resolve('favicon.png'),
       title: 'vue-element-admin',
       path: config.dev.assetsPublicPath + config.dev.assetsSubDirectory
     })

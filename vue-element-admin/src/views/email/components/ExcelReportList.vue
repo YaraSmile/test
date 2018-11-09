@@ -7,7 +7,6 @@
         </el-col>
         <el-col :span="12" align="middle">
           <div class="grid-content" align="right">
-            <!--<el-button type="primary" @click="handleCreate">Add</el-button>-->
             <el-button type="primary">Send Test Email</el-button>
           </div>
         </el-col>
@@ -16,7 +15,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item :label="$t('excelReportList.bizType')">
-              <el-input v-model="temp.bizType"/>
+              <el-input v-model="temp.bizType" disabled=""/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -53,8 +52,8 @@
         </el-row>
       </el-form>
       <div class="button-group">
-        <el-button type="primary" class="actionButton" size="mini" @click="handleEdit()">{{ $t('tableReportList.edit') }}</el-button>
-        <el-button type="primary" class="actionButton" size="mini" @click="handleSubmit()">{{ $t('tableReportList.submit') }}</el-button>
+        <el-button :disabled="!modifiable" type="primary" class="actionButton" size="mini" @click="handleEdit()">{{ $t('tableReportList.edit') }}</el-button>
+        <el-button :disabled="modifiable" type="primary" class="actionButton" size="mini" @click="handleSubmit()">{{ $t('tableReportList.submit') }}</el-button>
       </div>
     </div>
   </div>
@@ -62,9 +61,7 @@
 
 <script>
 import { getResult_param, postData } from '../../../api/email'
-// import axios from 'axios'
-const GET_EXCEL_URL = '/webapi/schedulereport/excel/biz'
-const POST_EXCEL_URL = '/webapi/schedulereport/biz/excel'
+import { GET_EXCEL_URL, POST_EXCEL_URL } from '@/api/constants'
 
 export default {
   name: 'ExcelReportList',

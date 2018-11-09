@@ -5,8 +5,8 @@
       <el-select v-model="listQuery.template" :placeholder="$t('email.templateName')" clearable class="filter-item" style="width: 130px">
         <el-option v-for="item in templateOptions" :key="item.key" :label="item.display_name" :value="item.display_name"/>
       </el-select>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('email.search') }}</el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">{{ $t('email.add') }}</el-button>
+      <el-button v-waves class="filter-item" disabled type="primary" icon="el-icon-search" @click="handleFilter">{{ $t('email.search') }}</el-button>
+      <el-button v-waves class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">{{ $t('email.add') }}</el-button>
     </div>
 
     <el-table
@@ -17,19 +17,19 @@
       fit
       highlight-current-row
       style="width: 100%;min-height:1000px;">
-      <el-table-column :label="$t('email.id')" prop="id" align="center" width="65">
+      <el-table-column :label="$t('email.id')" prop="id" align="center" width="60px">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('email.type')" width="150px">
+      <el-table-column :label="$t('email.type')" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.bizType }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('email.desc')" min-width="10px" align="center">
+      <el-table-column :label="$t('email.mailTitle')" min-width="100px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.bizDesc }}</span>
+          <span>{{ scope.row.mailTitle }}</span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('email.scheduleTime')" width="150px" align="center">
@@ -37,17 +37,17 @@
           <span>{{ scope.row.scheduleTimeExpr }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('email.templateName')" width="110px" align="center">
+      <el-table-column :label="$t('email.templateName')" width="100px" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.templateName }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('email.actions')" align="center" width="330px" class-name="small-padding fixed-width">
+      <el-table-column :label="$t('email.actions')" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="handleView(scope.row)">{{ $t('email.view') }}</el-button>
-          <el-button type="primary" size="mini" @click="handleEdit(scope.row)">{{ $t('email.edit') }}</el-button>
-          <el-button type="danger" size="mini" @click="handleDelete(scope.row)">{{ $t('email.delete') }}</el-button>
-          <el-button :disabled="publish_disabled" type="primary" size="mini" @click="handlePublish(scope.row)">{{ $t('email.publish') }}</el-button>
+          <el-button v-waves class="actionButton" type="primary" size="mini" @click="handleView(scope.row)">{{ $t('email.view') }}</el-button>
+          <el-button v-waves type="primary" class="actionButton" size="mini" @click="handleEdit(scope.row)">{{ $t('email.edit') }}</el-button>
+          <el-button v-waves class="actionButton" type="danger" size="mini" @click="handleDelete(scope.row)">{{ $t('email.delete') }}</el-button>
+          <el-button v-waves :disabled="publish_disabled" :type="scope.row.isValid?'success':'primary'" class="actionButton" size="mini" @click="publishBiz(scope.row)">{{ $t('email.publish') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -80,50 +80,34 @@
             <el-option v-for="item in templateOptions" :key="item.display_name" :label="item.display_name" :value="item.display_name"/>
           </el-select>
         </el-form-item>
+        <el-form-item :label="$t('email.mailTitleDateTimezone')">
+          <el-select v-model="temp.mailTitleDateTimezone" :disabled="modifiable" class="filter-item" prop="templateName" style="width:250px">
+            <el-option v-for="item in mailTitleDateTimezoneOptions" :key="item.display_name" :label="item.display_name" :value="item.display_name"/>
+          </el-select>
+        </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">{{ $t('email.cancel') }}</el-button>
-        <el-button v-if="dialogStatus=='create'" type="primary" @click="createData">{{ $t('email.confirm') }}</el-button>
-        <el-button v-else type="primary" @click="updateData">{{ $t('email.confirm') }}</el-button>
+      <div style="text-align:center">
+        <el-button v-waves @click="dialogFormVisible = false">{{ $t('email.cancel') }}</el-button>
+        <el-button v-waves v-if="dialogStatus=='create'" type="primary" @click="createData">{{ $t('email.confirm') }}</el-button>
+        <el-button v-waves v-else type="primary" @click="updateData">{{ $t('email.confirm') }}</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-// import axios from 'axios'
-import { getResult, postData, deleteData, postData_param } from '@/api/email'
-// import qs from 'qs'
 
+import { getResult, postData, deleteData } from '@/api/email'
 import waves from '@/directive/waves' // 水波纹指令
-
-const templateOptions = [
-  { display_name: 'Table' },
-  { display_name: 'Excel' }
-]
-
-const emailDateFormatOptions = [
-  { display_name: 'yyyyMMdd' }
-]
-
-const POST_LIST_URL = '/webapi/biz'
-const GET_LIST_URL = '/webapi/schedulereport/biz'
-const POST_PUBLISH_URL = '/webapi/biz/publish'
-
+import { templateOptions, emailDateFormatOptions, mailTitleDateTimezoneOptions } from '@/api/constants'
+import { POST_LIST_URL, GET_LIST_URL, POST_PUBLISH_URL } from '@/api/constants'
+import store from '@/store'
+// import axios from 'axios'
+// import qs from 'qs'
 export default {
   name: 'EmailReport',
   directives: {
     waves
-  },
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
   },
   data() {
     return {
@@ -139,6 +123,7 @@ export default {
       },
       templateOptions,
       emailDateFormatOptions,
+      mailTitleDateTimezoneOptions,
       // statusOptions: ['published', 'draft', 'deleted'],
       temp: {
         id: undefined,
@@ -148,11 +133,14 @@ export default {
         mailTitle: '',
         mailTitleDateFormat: '',
         templateName: 'Table',
-        isValid: ''
+        // isValid:1 means published
+        isValid: 0,
+        mailTitleDateTimezone: '',
+        scheduleTime: ''
       },
       dialogFormVisible: false,
       modifiable: false,
-      publish_disabled: false,
+      publish_disabled: true,
       dialogStatus: '',
       textMap: {
         update: 'Edit',
@@ -160,10 +148,10 @@ export default {
       },
       confirmVisible: false,
       rules: {
-        bizType: [{ required: true, message: 'Biz Type is required', trigger: 'change' }],
-        scheduleTimeExpr: [{ required: true, message: 'Schedule Time is required', trigger: 'change' }],
+        bizType: [{ required: true, message: 'Biz Type is required', trigger: 'blur' }],
+        scheduleTimeExpr: [{ required: true, message: 'Schedule Time is required', trigger: 'blur' }],
         mailTitle: [{ required: true, message: 'Mail Title is required', trigger: 'blur' }],
-        mailTitleDateFormat: [{ required: true, message: 'EMail  is required', trigger: 'blur' }],
+        // mailTitleDateFormat: [{ required: true, message: 'EMail Dataformat  is required', trigger: 'blur' }],
         templateName: [{ required: true, message: 'Template  is required', trigger: 'blur' }]
       }
     }
@@ -178,13 +166,19 @@ export default {
         if (response.data.code === 1) {
           this.list = response.data.data.list
           this.total = response.data.data.total
+          if (store.getters.email === 'felix@oriente.com' && this.getter.email === 'zhibo.zhao@oriente.com' && this.list.isValid === 0) {
+          // if ( this.emailList.indexOf(store.getters.email) && this.list.isValid === 0) {
+            this.publish_disabled = true
+          } else {
+            this.publish_disabled = false
+          }
           this.listLoading = false
         }
       })
     },
     handleFilter() {
-      this.listQuery.pageNo = 1
-      this.getList()
+      // this.listQuery.pageNo = 1
+      // this.getList()
     },
     handleSizeChange(val) {
       this.listQuery.pageSize = val
@@ -201,9 +195,12 @@ export default {
         bizDesc: '',
         scheduleTimeExpr: '',
         mailTitle: '',
-        mailTitleDateFormat: 'yyyyMMdd',
+        mailTitleDateFormat: '',
         templateName: 'Table',
-        isValid: ''
+        // isValid:1 means pushed, 0 means not
+        isValid: 0,
+        scheduleTime: '',
+        mailTitleDateTimezone: ''
       }
     },
     handleCreate() {
@@ -211,7 +208,6 @@ export default {
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.modifiable = false
-      this.publish_disabled = false
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
@@ -248,9 +244,6 @@ export default {
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.modifiable = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
     },
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
@@ -292,31 +285,38 @@ export default {
         })
       }
     },
-    handlePublish(row) {
-      this.copyData(this.temp, row)
-      this.$confirm('This action will publish email, are you sure?', 'Tips', {
+    publishBiz(row) {
+      // this.copyData(this.temp, row)
+      this.$confirm('This action will send email on schedule, are you sure?', 'Tips', {
         confirmButtonText: 'Publish',
         cancelButtonText: 'Cancle',
         type: 'warning'
       }).then(() => {
-        this.temp.isValid = 0
-        postData_param(POST_PUBLISH_URL, this.temp.bizId).then((response) => {
-          if (response.data.code === 1) {
+        postData(`${POST_PUBLISH_URL}/${row.id}`, row.id).then(res => {
+          console.log('publishg........', res)
+          if (res.data.code === 1) {
             this.publish_disabled = false
-            this.$message({
+            this.$notify({
               type: 'success',
-              message: ' Published Success!',
+              message: ' Published Successfully!',
+              duration: 2000
+            })
+          } else {
+            this.$notify({
+              type: 'error',
+              message: res.data.msg,
               duration: 2000
             })
           }
         }).catch(err => {
-          this.alert(err)
+          this.$alert(err)
           console.log(err)
         })
       }).catch(() => {
-        this.$message({
+        this.$notify({
           type: 'info',
-          message: ' Cancled.'
+          message: ' Cancled.',
+          duration: 2000
         })
       })
     },
@@ -326,36 +326,39 @@ export default {
         cancelButtonText: 'Cancle',
         type: 'warning'
       }).then(() => {
-        this.temp.isValid = 0
         deleteData(POST_LIST_URL, row.id).then((response) => {
           console.log(888, response)
           if (response.data.code === 1) {
-            this.$message({
+            this.$notify({
               type: 'success',
-              message: 'Delete Success!'
+              message: 'Deleted Successfully!',
+              duration: 2000
             })
             this.getList()
+          } else {
+            this.$notify({
+              type: 'error',
+              message: 'Delete Unsuccessfully, please delete later',
+              duration: 2000
+            })
           }
         }).catch(e => {
           this.$alert(e)
           console.log(e)
         })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: 'Cancled.'
-        })
-      })
+      }).catch(_ => {})
     },
     copyData(temp, row) {
       temp.id = row.id
       temp.bizType = row.bizType
       temp.bizDesc = row.bizDesc
+      temp.scheduleTime = row.scheduleTime
       temp.mailTitleDateFormat = row.mailTitleDateFormat
       temp.mailTitle = row.mailTitle
       temp.scheduleTimeExpr = row.scheduleTimeExpr
       temp.templateName = row.templateName
       temp.isValid = row.isValid
+      temp.mailTitleDateTimezone = row.mailTitleDateTimezone
     }
   }
 }

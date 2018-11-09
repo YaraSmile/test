@@ -1,4 +1,5 @@
-import request from '@/utils/request'
+import axios from 'axios'
+import qs from 'qs'
 // const userMap = {
 //   admin: {
 //     roles: ['admin'],
@@ -15,46 +16,23 @@ import request from '@/utils/request'
 //     name: 'Normal Editor'
 //   }
 // }
-
+const headers = { 'username': 'lei.gao@oriente.com' }
 export function loginByUsername(username, password) {
   const data = {
-    username,
-    password
+    email: username,
+    password: password
   }
-  // console.log('userName:' + data.username)
-  // console.log('password:' + data.password)
-  // // const { username1 } = data
-  // console.log(userMap[username])
-  // return userMap[username]
-  return request({
-    url: '/login/login',
-    method: 'post',
-    data
-  })
+  const url = '/crm/login'
+  return axios.post(url, qs.stringify(data), { headers: headers })
 }
 
-export function logout() {
-  // return 'success'
-  return request({
-    url: '/login/logout',
-    method: 'post'
-  })
-}
-
-export function getUserInfo(token) {
-  // const { token } = param2Obj(config.url)
-  // const token1 = 'admin'
-  // console.log('token-mock:' + token)
-  // console.log(userMap[token])
-  // if (userMap[token1]) {
-  //   return userMap[token1]
-  // } else {
-  //   return false
-  // }
-  return request({
-    url: '/user/info',
-    method: 'get',
-    params: { token }
-  })
+export function getSideBarInfo(token, tokenSecret) {
+  console.log(token, tokenSecret)
+  const data = {
+    token: token,
+    tokenSecret: tokenSecret
+  }
+  const url = '/crm/menu'
+  return axios.post(url, qs.stringify(data), { header: headers })
 }
 

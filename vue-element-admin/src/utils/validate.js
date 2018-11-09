@@ -3,8 +3,10 @@
  */
 
 export function isvalidUsername(str) {
-  const valid_map = ['admin', 'editor']
-  return valid_map.indexOf(str.trim()) >= 0
+  const reg = /^[a-z0-9](?:[-_.+]?[a-z0-9]+)*@oriente\.com$/i
+  return reg.test(str.trim())
+  // const valid_map = ['admin', 'editor']
+  // return valid_map.indexOf(str.trim()) >= 0
 }
 
 /* 合法uri*/

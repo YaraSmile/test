@@ -1,8 +1,7 @@
 <template>
   <div class="login-container">
-
-    <!--<el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">-->
-    <el-form ref="loginForm" :model="loginForm" class="login-form" auto-complete="on" label-position="left">
+    <img class="icon" src="https://oriente.com/wp-content/uploads/2018/05/Oriente_logo_grey.png">
+    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
         <h3 class="title">{{ $t('login.title') }}</h3>
@@ -37,29 +36,8 @@
           <svg-icon icon-class="eye" />
         </span>
       </el-form-item>
-
-      <!--<el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button>-->
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click="handleLogin">{{ $t('login.logIn') }}</el-button>
-
-      <div class="tips">
-        <span>{{ $t('login.username') }} : admin</span>
-        <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
-      </div>
-      <div class="tips">
-        <span style="margin-right:18px;">{{ $t('login.username') }} : editor</span>
-        <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
-      </div>
-
-      <el-button class="thirdparty-button" type="primary" @click="showDialog=true">{{ $t('login.thirdparty') }}</el-button>
     </el-form>
-
-    <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog" append-to-body>
-      {{ $t('login.thirdpartyTips') }}
-      <br>
-      <br>
-      <br>
-      <social-sign />
-    </el-dialog>
 
   </div>
 </template>
@@ -84,25 +62,29 @@ export default {
         callback()
       }
     }
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
-      } else {
-        callback()
-      }
-      console.log(value)
-      if (value) {
-        callback()
-      }
-    }
+    // const validatePassword = (rule, value, callback) => {
+    //   if (value.length < 6) {
+    //     callback(new Error('The password can not be less than 6 digits'))
+    //   } else {
+    //     callback()
+    //   }
+    //   console.log(value)
+    //   if (value) {
+    //     callback()
+    //   }
+    // }
     return {
       loginForm: {
-        username: 'admin',
-        password: '1111111'
+        username: '',
+        password: ''
       },
+      // loginRules: {
+      //   username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+      //   password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+      // },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        username: [{ required: true, message: 'Please input email address', trigger: 'blur', validator: validateUsername }, { type: 'email', message: 'Please input correct email address', trigger: 'blur' }],
+        password: [{ required: true, trigger: 'blur' }]
       },
       passwordType: 'password',
       loading: false,
@@ -124,43 +106,20 @@ export default {
       }
     },
     handleLogin() {
-      console.log('jfiasfjie')
-      this.$router.push({ path: '/' })
-      console.log('jfiasfjiedse')
-    },
-    // handleLogin() {
-    //   this.$refs.loginForm.validate(valid => {
-    //     if (valid) {
-    //       this.loading = true
-    //       this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
-    //         this.loading = false
-    //         this.$router.push({ path: '/' })
-    //       }).catch(() => {
-    //         this.loading = false
-    //       })
-    //     } else {
-    //       console.log('error submit!!')
-    //       return false
-    //     }
-    //   })
-    // },
-    afterQRScan() {
-      // const hash = window.location.hash.slice(1)
-      // const hashObj = getQueryObject(hash)
-      // const originUrl = window.location.origin
-      // history.replaceState({}, '', originUrl)
-      // const codeMap = {
-      //   wechat: 'code',
-      //   tencent: 'code'
-      // }
-      // const codeName = hashObj[codeMap[this.auth_type]]
-      // if (!codeName) {
-      //   alert('第三方登录失败')
-      // } else {
-      //   this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
-      //     this.$router.push({ path: '/' })
-      //   })
-      // }
+      this.$refs.loginForm.validate(valid => {
+        if (valid) {
+          this.loading = true
+          this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
+            this.loading = false
+            this.$router.push({ path: '/dashboard' })
+          }).catch(() => {
+            this.loading = false
+          })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
     }
   }
 }
@@ -168,7 +127,6 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss">
   /* 修复input 背景不协调 和光标变色 */
-  /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
   $bg:#283443;
   $light_gray:#eee;
@@ -223,6 +181,13 @@ $light_gray:#eee;
   height: 100%;
   width: 100%;
   background-color: $bg;
+  .icon {
+    position:absolute;
+    width:164px;
+    height:45px;
+    top:10px;
+    left:10px;
+  }
   .login-form {
     position: absolute;
     left: 0;

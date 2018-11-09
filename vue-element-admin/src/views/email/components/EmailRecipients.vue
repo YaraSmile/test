@@ -7,7 +7,7 @@
         </el-col>
         <el-col :span="12">
           <div style="margin-right:15px;margin-bottom:15px;" align="right">
-            <el-button type="primary" icon="el-icon-plus" @click="handleCreate()">{{ $t('emailRecipients.add') }}</el-button>
+            <el-button type="primary" size="mini" @click="handleCreate()">{{ $t('emailRecipients.add') }}</el-button>
           </div>
         </el-col>
       </el-row>
@@ -44,8 +44,8 @@
           <el-form-item :label="$t('emailRecipients.mail')" prop="mail">
             <el-input v-model="temp.mail"/>
           </el-form-item>
-          <el-form-item :label="$t('emailRecipients.mailOrder')">
-            <el-input v-model="temp.mailOrder"/>
+          <el-form-item :label="$t('emailRecipients.mailOrder')" prop="mailOrder">
+            <el-input v-model="temp.mailOrder" type="number"/>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -59,11 +59,9 @@
 </template>
 <script>
 import { getResult_param, deleteData, postData } from '../../../api/email'
-
-const env = 'test'
-const GET_RECIP_URL = '/webapi/schedulereport/biz'
-const DELETE_RECIP_URL = '/webapi/schedulereport/biz/mail'
-const POST_RECIP_URL = '/webapi/schedulereport/biz/mail'
+import { GET_RECIP_URL, DELETE_RECIP_URL, POST_RECIP_URL } from '@/api/constants'
+// const env = 'test'
+const env = process.env.ENV_CONFIG
 
 export default {
   name: 'EmailRecipients',
@@ -76,7 +74,6 @@ export default {
   data() {
     return {
       list: null,
-      // loading: false,
       temp: {
         bizType: this.bizType,
         mail: '',
@@ -90,7 +87,8 @@ export default {
       dialogFormVisible: false,
       dialogStatus: 'update',
       rules: {
-        mail: [{ required: true, message: 'Please input Email', type: 'email', trigger: 'blur' }]
+        mail: [{ required: true, message: 'Please input Email', type: 'email', trigger: 'blur' }],
+        mailOrder: [{ required: true, message: 'Please input order', trigger: 'blur' }]
       }
     }
   },
@@ -99,11 +97,9 @@ export default {
   },
   methods: {
     getRecipients() {
-      // this.loading = true
+      console.log('env', env)
       getResult_param(`${GET_RECIP_URL}/${this.bizType}/env`, env).then(res => {
-        // this.loading = false
         if (res.data.code === 1) {
-          console.log(5555, res)
           this.list = res.data.data
         } else {
           this.$notify({
@@ -114,7 +110,6 @@ export default {
           })
         }
       }).catch(err => {
-        // this.loading = false
         this.$alert(err)
       })
     },
@@ -160,27 +155,33 @@ export default {
       })
     },
     handleDelete(row) {
-      deleteData(DELETE_RECIP_URL, row.id).then(res => {
-        if (res.data.code === 1) {
-          this.$notify({
-            title: '成功',
-            message: '删除成功',
-            type: 'success',
-            duration: 2000
-          })
-          this.getRecipients()
-        } else {
-          this.$notify({
-            title: '失败',
-            message: res.data.msg,
-            type: 'fail',
-            duration: 2000
-          })
-        }
-      }).catch(err => {
-        this.$alert(err)
-        console.log(err)
-      })
+      this.$confirm('Are you sure delete this recipient?', 'Tips', {
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancle',
+        type: 'warning'
+      }).then(() => {
+        deleteData(DELETE_RECIP_URL, row.id).then(res => {
+          if (res.data.code === 1) {
+            this.$notify({
+              title: '成功',
+              message: '删除成功',
+              type: 'success',
+              duration: 2000
+            })
+            this.getRecipients()
+          } else {
+            this.$notify({
+              title: '失败',
+              message: res.data.msg,
+              type: 'error',
+              duration: 2000
+            })
+          }
+        }).catch(err => {
+          this.$alert(err)
+          console.log(err)
+        })
+      }).catch(_ => {})
     }
   }
 }

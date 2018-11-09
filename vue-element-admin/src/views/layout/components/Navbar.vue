@@ -19,11 +19,11 @@
 
       <el-dropdown class="avatar-container right-menu-item" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+          <img :src="imgUrl+'?imageView2/1/w/80/h/80'" class="user-avatar">
           <i class="el-icon-caret-bottom"/>
         </div>
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/">
+          <router-link to="/dashboard">
             <el-dropdown-item>
               {{ $t('navbar.dashboard') }}
             </el-dropdown-item>
@@ -50,6 +50,7 @@ import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 import LangSelect from '@/components/LangSelect'
 import ThemePicker from '@/components/ThemePicker'
+import SizeSelect from '@/components/SizeSelect'
 
 export default {
   components: {
@@ -58,13 +59,14 @@ export default {
     ErrorLog,
     Screenfull,
     LangSelect,
-    ThemePicker
+    ThemePicker,
+    SizeSelect
   },
   computed: {
     ...mapGetters([
       'sidebar',
-      'name',
-      'avatar'
+      'email',
+      'imgUrl'
     ])
   },
   methods: {

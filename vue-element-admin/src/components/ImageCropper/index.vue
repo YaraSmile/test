@@ -119,7 +119,7 @@ export default {
     // 域，上传文件name，触发事件会带上（如果一个页面多个图片上传控件，可以做区分
     field: {
       type: String,
-      'default': 'avatar'
+      'default': 'imgUrl'
     },
     // 原名key，类似于id，触发事件会带上（如果一个页面多个图片上传控件，可以做区分
     ki: {

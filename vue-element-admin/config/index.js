@@ -17,17 +17,16 @@ module.exports = {
       '/webapi/biz' :{
         target: 'http://ec2-52-80-209-215.cn-north-1.compute.amazonaws.com.cn:8090', // 你请求的第三方接口
         changeOrigin: true // 在本地会创建一个虚拟服务端，然后发送请求的数据，并同时接收请求的数据，这样服务端和服务端进行数据的交互就不会有跨域问
+      },
+      '/crm/*' :{
+        target: 'http://ec2-52-80-209-215.cn-north-1.compute.amazonaws.com.cn:8086', // 你请求的第三方接口
+        changeOrigin: true // 在本地会创建一个虚拟服务端，然后发送请求的数据，并同时接收请求的数据，这样服务端和服务端进行数据的交互就不会有跨域问
       }
-      // '/webapi/schedulereport/table/biz/*': {
-      //   target: 'http://ec2-52-80-209-215.cn-north-1.compute.amazonaws.com.cn:8090', // 你请求的第三方接口
-      //   changeOrigin: true // 在本地会创建一个虚拟服务端，然后发送请求的数据，并同时接收请求的数据，这样服务端和服务端进行数据的交互就不会有跨域问
-      // }
-
     },
     // Various Dev Server settings
     // can be overwritten by process.env.HOST
     // if you want dev by ip, please set host: '0.0.0.0'
-    host: 'localhost',
+    host: '0.0.0.0',
     port: 9527, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,
